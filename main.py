@@ -1,7 +1,10 @@
-from ui.main_window import MainWindow
+import ui.window_main as ui
+import core.system as core
+from core.channel.channel import Channel
 
 def main():
-    window = MainWindow()
+    system = core.System()
+    window = ui.WindowMain(system)
     window.run()
 
 if __name__ == "__main__":

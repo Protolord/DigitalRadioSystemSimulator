@@ -19,10 +19,10 @@ def qam(time, signal, symbol_duration, carrier_freq):
         fft = 2*numpy.fft.fft(signal[t1:t2])/length
         f1 = fft.size - int(symbol_duration*numpy.where(freq > carrier_freq + bandwidth/2)[0][0])
         f2 = fft.size - int(symbol_duration*numpy.where(freq > carrier_freq - bandwidth/2)[0][0])
-        if i == 0:
-            plotter.vertical_line(f1, 'red')
-            plotter.vertical_line(f2, 'blue')
-            plotter.fft(signal[t1:t2], length)
-            plotter.time_domain(time[t1:t2], signal[t1:t2])
+        # if i == 0:
+        #     plotter.vertical_line(f1, 'red')
+        #     plotter.vertical_line(f2, 'blue')
+        #     plotter.fft(signal[t1:t2], length)
+        #     plotter.time_domain(time[t1:t2], signal[t1:t2])
         symbolstream[i] = utils.max(fft[f1:f2])
     return symbolstream

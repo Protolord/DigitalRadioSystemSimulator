@@ -1,5 +1,6 @@
 import numpy
 
+
 def max(array):
     max_wave = array[0]
     max_abs = numpy.abs(max_wave)

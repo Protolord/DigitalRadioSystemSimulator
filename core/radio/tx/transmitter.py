@@ -1,22 +1,28 @@
-import core.radio.tx.modulator as modulator
+import numpy
+import core.system as system
+import core.config.radio_config as config
+import core.radio.tx.iq_mapper as iq_mapper
 import core.radio.tx.wave_generator as wave_generator
+
 
 class Transmitter():
 
     def __init__(self):
-        self.env_config = EnvironmentConfig()
-        self.radio_config = RadioConfig()
+        self.radio_config = config.RadioConfig()
 
     @classmethod
-    def modulate(modulation_scheme, bitstring):
+    def modulate(modulation_scheme, bitstream):
         return {
-            'bpsk': modulator.bpsk(bitstring),
-            'qpsk': modulator.qpsk(bitstring),
+            'BPSK' : iq_mapper.bpsk(bitstream),
+            'QPSK' : iq_mapper.qpsk(utils.zero_padder(bitstream), 2),
+            '16QAM': iq_mapper.qam16(utils.zero_padder(bitstream), 4),
         }[modulation_scheme]
 
-    def process(self, bitstring):
-        signals = self.modulate(self.radio_config.modulation_scheme, bitstring)
-        waveform = wave_generator.process(self.radio_config.tx_time, signals, self.env_config.symbol_duration,
-                                          self.radio_config.carrier_freq)
+    def process(self, system, bitstream):
+        t1 = numpy.where(system.time > self.radio_config.tx_timestart)[0][0]
+        t2 = numpy.where(system.time > self.radio_config.tx_timestop)[0][0]
+        symbolstream = self.modulate(self.radio_config.tx_modulation, bitstream)
+        modulated_signal = wave_generator.qam(system.time[t1:t2], symbolstream,
+            self.radio_config.tx_symbol_duration,  self.radio_config.tx_carrier_freq)
 
 

@@ -1,6 +1,7 @@
 import numpy
 import core.utils.utils as utils
 
+
 # Reference: TS 38.211 5.1.2 BPSK
 def bpsk(bitstream):
     value = (1 - 2*bitstream)
