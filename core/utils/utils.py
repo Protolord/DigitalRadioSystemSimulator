@@ -10,13 +10,11 @@ def max(array):
     return max_wave
 
 def isclose(a, b, atol=0, rtol=0.1):
-    # if a.size != b.size:
-    print('Unmatching size: a.size=' + str(a.size) + ', b.size=' + str(b.size))
     table = numpy.abs(numpy.abs(a) - numpy.abs(b)) <= atol + rtol*numpy.abs(b)
     return table
 
 def zero_padder(bitstream, multiple):
-    count = bitstream.size%multiple
-    if 0 == count:
+    add_count = multiple - bitstream.size%multiple
+    if 0 == add_count:
         return bitstream
-    return numpy.pad(bitstream, (0, count))
+    return numpy.pad(bitstream, (0, add_count))
