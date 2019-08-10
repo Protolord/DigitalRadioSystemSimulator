@@ -13,7 +13,7 @@ def test_qam_1symbol():
     expected_symbolstream = numpy.array([1 + 1j])
     actual_signal = wave_generator.qam(time, expected_symbolstream, symbol_duration, carrier_freq)
     actual_symbolstream = wave_detector.qam(time, actual_signal, symbol_duration, carrier_freq)
-    assert (utils.isclose(expected_symbolstream, actual_symbolstream, rtol=0.01)).all()
+    assert (utils.isclose(expected_symbolstream, actual_symbolstream, atol=0.25, rtol=0.1)).all()
 
 def test_qam_2symbol():
     time = numpy.linspace(0, 1, int(1e4))
@@ -22,7 +22,7 @@ def test_qam_2symbol():
     expected_symbolstream = numpy.array([1 + 1j, -1 - 1j])
     actual_signal = wave_generator.qam(time, expected_symbolstream, symbol_duration, carrier_freq)
     actual_symbolstream = wave_detector.qam(time, actual_signal, symbol_duration, carrier_freq)
-    assert (utils.isclose(expected_symbolstream, actual_symbolstream, rtol=0.01)).all()
+    assert (utils.isclose(expected_symbolstream, actual_symbolstream, atol=0.25, rtol=0.1)).all()
 
 def test_qam_4symbol():
     time = numpy.linspace(0, 1, int(1e4))
@@ -31,7 +31,7 @@ def test_qam_4symbol():
     expected_symbolstream = numpy.array([1 + 1j, -1 - 1j, 1, -1j])
     actual_signal = wave_generator.qam(time, expected_symbolstream, symbol_duration, carrier_freq)
     actual_symbolstream = wave_detector.qam(time, actual_signal, symbol_duration, carrier_freq)
-    assert (utils.isclose(expected_symbolstream, actual_symbolstream, rtol=0.01)).all()
+    assert (utils.isclose(expected_symbolstream, actual_symbolstream, atol=0.25, rtol=0.1)).all()
 
 def test_qam_8symbol():
     time = numpy.linspace(0, 1, int(1e4))
@@ -40,4 +40,4 @@ def test_qam_8symbol():
     expected_symbolstream = numpy.array([1 + 1j, -1 - 1j, 1, -1j, -1, 1 + 1j, -1 + 1j, 1j])
     actual_signal = wave_generator.qam(time, expected_symbolstream, symbol_duration, carrier_freq)
     actual_symbolstream = wave_detector.qam(time, actual_signal, symbol_duration, carrier_freq)
-    assert (utils.isclose(expected_symbolstream, actual_symbolstream, rtol=0.01)).all()
+    assert (utils.isclose(expected_symbolstream, actual_symbolstream, atol=0.25, rtol=0.1)).all()

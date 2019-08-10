@@ -1,6 +1,7 @@
 import numpy
 import matplotlib.pyplot as pyplot
 
+
 def time_domain(time, signal):
     pyplot.plot(time, signal)
     pyplot.show()

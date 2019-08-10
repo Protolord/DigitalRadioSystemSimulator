@@ -11,11 +11,12 @@ def max(array):
     return max_wave
 
 def isclose(a, b, atol=0, rtol=0.1):
-    table = numpy.abs(numpy.abs(a) - numpy.abs(b)) <= atol + rtol*numpy.abs(b)
-    return table
+    real = numpy.round(numpy.abs(a.real - b.real), 15) <= atol + rtol*numpy.abs((a.real + b.real)/2)
+    imag = numpy.round(numpy.abs(a.imag - b.imag), 15) <= atol + rtol*numpy.abs((a.imag + b.imag)/2)
+    return (real & imag)
 
 def zero_padder(bitstream, multiple):
-    add_count = multiple - bitstream.size%multiple
-    if 0 == add_count:
+    mod = bitstream.size%multiple
+    if 0 == mod:
         return bitstream
-    return numpy.pad(bitstream, (0, add_count))
+    return numpy.pad(bitstream, (0, multiple - mod))
