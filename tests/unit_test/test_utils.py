@@ -2,6 +2,7 @@ import pytest
 import numpy
 import core.utils.utils as utils
 
+
 testdata_max = [
     (complex(6, 0),   numpy.array([6, 2 + 5j, 5j, -4 + 4j, -5, -4 - 3j, -5j, 5 - 2j])),
     (complex(5, 4),   numpy.array([6, 5 + 4j, 6j, -3 + 5j, -6, -4 - 4j, -5j, 6 - 2j])),
