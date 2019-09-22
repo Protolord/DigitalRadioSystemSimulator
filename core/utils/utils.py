@@ -20,3 +20,20 @@ def zero_padder(bitstream, multiple):
     if 0 == mod:
         return bitstream
     return numpy.pad(bitstream, (0, multiple - mod))
+
+def check_input_validity(data, range_values, data_type='int'):
+    if data_type == 'int':
+        try:
+            value = int(data)
+            if value >= int(range_values[0]) and value <= int(range_values[1]):
+                return True
+        except ValueError:
+            return False
+    elif data_type == 'float':
+        try:
+            value = float(data)
+            if value >= float(range_values[0]) and value <= float(range_values[1]):
+                return True
+        except ValueError:
+            return False
+    return False

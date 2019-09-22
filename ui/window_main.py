@@ -32,9 +32,7 @@ class WindowMain():
         self.root.mainloop()
 
     def open_system_config(self):
-        print('System Configuration opened')
-        window_system_config = system.WindowSystemConfig()
-        self.system.config = window_system_config.apply()
+        system.WindowSystemConfig(self.system.config)
 
     def open_radio_config(self):
         print('Radio Configuration opened')
