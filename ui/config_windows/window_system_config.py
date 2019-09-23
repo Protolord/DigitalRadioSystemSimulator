@@ -29,6 +29,7 @@ class WindowSystemConfig():
         self.entry_sim_duration.insert(0, str(self.cfg.sim_duration))
         self.entry_sampling_rate.focus()
         self.root.bind('<Return>', self.apply)
+        self.root.bind('<Escape>', self.close)
         # grids
         self.label_sampling_rate.grid(row=0, column=0, sticky=tkinter.E, padx=(10, 0))
         self.entry_sampling_rate.grid(row=0, column=1, padx=(0, 10))
@@ -65,4 +66,7 @@ class WindowSystemConfig():
             return
         self.cfg.sampling_rate = int(self.entry_sampling_rate.get())
         self.cfg.sim_duration = float(self.entry_sim_duration.get())
+        self.close()
+
+    def close(self, event=None):
         self.root.destroy()
