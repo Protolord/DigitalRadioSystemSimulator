@@ -7,44 +7,37 @@ import ui.config_windows.window_system_config as system
 class WindowMain():
 
     def __init__(self, system):
-        self.system = system
-        self.root = tkinter.Tk()
-        self.setup_icon()
-        self.setup_menubar()
-
-    def setup_icon(self):
-        self.root.title("Digital Radio System Simulator")
-        self.root.call('wm', 'iconphoto', self.root._w, tkinter.PhotoImage(file='ui/images/icon.gif'))
-
-    def setup_menubar(self):
-        self.menu = tkinter.Menu(self.root)
-        self.root.config(menu=self.menu)
+        self._system = system
+        self._root = tkinter.Tk()
+        # icon
+        self._root.title('Digital Radio System Simulator')
+        self._root.call('wm', 'iconphoto', self._root._w, tkinter.PhotoImage(file='ui/images/icon.gif'))
         # menubar
-        self.menu_config = tkinter.Menu(self.menu)
-        self.menu_config.add_command(label='System Configuration', command=self.open_system_config, accelerator='F1')
-        self.menu_config.add_command(label='Radio Configuration', command=self.open_radio_config, accelerator='F2')
-        self.menu_config.add_command(label='Channel Configuration', command=self.open_channel_config, accelerator='F3')
-        self.menu_help = tkinter.Menu(self.menu)
-        self.menu_help.add_command(label='About')
-        self.menu.add_cascade(label='Configurations', menu=self.menu_config)
-        self.menu.add_cascade(label='Help', menu=self.menu_help)
+        menu = tkinter.Menu(self._root)
+        self._root.config(menu=menu)
+        menu_config = tkinter.Menu(menu)
+        menu_config.add_command(label='Run', command=self._system.run, accelerator='F1')
+        menu_config.add_command(label='System Configuration', command=self.open_system_config, accelerator='F2')
+        menu_config.add_command(label='Radio Configuration', command=self.open_radio_config, accelerator='F3')
+        menu_config.add_command(label='Channel Configuration', command=self.open_channel_config, accelerator='F4')
+        menu_help = tkinter.Menu(menu)
+        menu_help.add_command(label='About')
+        menu.add_cascade(label='Simulation', menu=menu_config)
+        menu.add_cascade(label='Help', menu=menu_help)
         # key bindings
-        self.root.bind('<F1>', self.open_system_config)
-        self.root.bind('<F2>', self.open_radio_config)
-        self.root.bind('<F3>', self.open_channel_config)
+        self._root.bind('<F1>', self._system.run)
+        self._root.bind('<F2>', self.open_system_config)
+        self._root.bind('<F3>', self.open_radio_config)
+        self._root.bind('<F4>', self.open_channel_config)
 
     def run(self):
-        self.root.mainloop()
+        self._root.mainloop()
 
     def open_system_config(self, event=None):
-        system.WindowSystemConfig(self.system.config)
+        system.WindowSystemConfig(self._system)
 
     def open_radio_config(self, event=None):
-        print('Radio Configuration opened')
-        window_radio_config = radio.WindowRadioConfig()
-        radio_config = window_radio_config.apply()
-        self.system.radios[radio_config.radio_index] = radio_config
+        radio.WindowRadioConfig(self._system)
 
     def open_channel_config(self, event=None):
-        print('Channel Configuration opened')
-        window_channel_config = channel.WindowChannelConfig()
+        channel.WindowChannelConfig(self._system)

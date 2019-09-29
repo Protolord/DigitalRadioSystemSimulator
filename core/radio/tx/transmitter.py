@@ -1,6 +1,5 @@
 import numpy
 import core.system as system
-import core.config.radio_config as config
 import core.radio.tx.iq_mapper as iq_mapper
 import core.radio.tx.wave_generator as wave_generator
 
@@ -8,7 +7,7 @@ import core.radio.tx.wave_generator as wave_generator
 class Transmitter():
 
     def __init__(self):
-        self.radio_config = config.RadioConfig()
+        return None
 
     @classmethod
     def modulate(modulation_scheme, bitstream):

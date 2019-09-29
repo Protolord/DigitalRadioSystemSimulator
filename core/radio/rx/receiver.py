@@ -1,5 +1,4 @@
 import core.system as system
-import core.config.radio_config as config
 import core.radio.rx.iq_demapper as iq_demapper
 import core.radio.rx.wave_detector as wave_detector
 
@@ -7,7 +6,7 @@ import core.radio.rx.wave_detector as wave_detector
 class Receiver():
 
     def __init__(self):
-        self.radio_config = config.RadioConfig()
+        return None
 
     @classmethod
     def demodulate(modulation_scheme, symbolstream):

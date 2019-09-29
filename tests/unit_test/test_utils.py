@@ -14,7 +14,7 @@ testdata_max = [
     (complex(4, -5),  numpy.array([6, 4 + 4j, 6j, -2 + 6j, -6, -3 - 5j, 06j, 4 - 5j]))
 ]
 
-@pytest.mark.parametrize("expected, data", testdata_max)
+@pytest.mark.parametrize('expected, data', testdata_max)
 def test_max(expected, data):
     assert (expected == utils.max(data))
 
@@ -40,7 +40,7 @@ testdata_isclose = [
     (False, 5 + 5j,  4.6 + 4.6j, 0, 0.05)
 ]
 
-@pytest.mark.parametrize("expected, arg1, arg2, atol, rtol", testdata_isclose)
+@pytest.mark.parametrize('expected, arg1, arg2, atol, rtol', testdata_isclose)
 def test_isclose(expected, arg1, arg2, atol, rtol):
     assert (expected == utils.isclose(arg1, arg2, atol=atol, rtol=rtol))
 
@@ -70,33 +70,33 @@ testdata_zero_padder = [
     (numpy.array([1, 1, 1, 1, 0, 0]), numpy.array([1, 1, 1, 1]), 6)
 ]
 
-@pytest.mark.parametrize("expected, data, multiple", testdata_zero_padder)
+@pytest.mark.parametrize('expected, data, multiple', testdata_zero_padder)
 def test_zero_padder(expected, data, multiple):
     assert (expected == utils.zero_padder(data, multiple)).all()
 
 testdata_check_input_validity = [
     # int
-    (True,     "123", (   1, 1000), 'int'),
-    (False,    "123", ( 150, 1000), 'int'),
-    (True,    "-456", (-500,  500), 'int'),
-    (False,   "-456", (-800, -500), 'int'),
-    (True,     "123", ( 123, 1000), 'int'),
-    (True,     "123", (   1,  123), 'int'),
-    (False, "123.45", (   0, 1000), 'int'),
-    (False,    "abc", (   0, 1000), 'int'),
-    (False,       "", (   1, 1000), 'int'),
+    (True,     '123', (   1, 1000), 'int'),
+    (False,    '123', ( 150, 1000), 'int'),
+    (True,    '-456', (-500,  500), 'int'),
+    (False,   '-456', (-800, -500), 'int'),
+    (True,     '123', ( 123, 1000), 'int'),
+    (True,     '123', (   1,  123), 'int'),
+    (False, '123.45', (   0, 1000), 'int'),
+    (False,    'abc', (   0, 1000), 'int'),
+    (False,       '', (   1, 1000), 'int'),
     # float
-    (True,     "123", (   1, 1000), 'float'),
-    (False,    "123", ( 150, 1000), 'float'),
-    (True,    "-456", (-500,  500), 'float'),
-    (False,   "-456", (-800, -500), 'float'),
-    (False,    "abc", (   0, 1000), 'float'),
-    (True,     "123", ( 123, 1000), 'float'),
-    (True,     "123", (   1,  123), 'float'),
-    (True,  "123.45", (   0, 1000), 'float'),
-    (False,       "", (   1, 1000), 'float')
+    (True,     '123', (   1, 1000), 'float'),
+    (False,    '123', ( 150, 1000), 'float'),
+    (True,    '-456', (-500,  500), 'float'),
+    (False,   '-456', (-800, -500), 'float'),
+    (False,    'abc', (   0, 1000), 'float'),
+    (True,     '123', ( 123, 1000), 'float'),
+    (True,     '123', (   1,  123), 'float'),
+    (True,  '123.45', (   0, 1000), 'float'),
+    (False,       '', (   1, 1000), 'float')
 ]
 
-@pytest.mark.parametrize("expected, data, range_values, data_type", testdata_check_input_validity)
+@pytest.mark.parametrize('expected, data, range_values, data_type', testdata_check_input_validity)
 def test_check_input_validity(expected, data, range_values, data_type):
     assert (expected == utils.check_input_validity(data, range_values, data_type))

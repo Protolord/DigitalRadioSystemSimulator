@@ -1,14 +1,12 @@
 import tkinter
-import core.config.radio_config as config
 
 
 class WindowRadioConfig():
 
-    def __init__(self):
-        self.root = tkinter.Toplevel()
-        self.root.grab_set()
+    def __init__(self, system):
+        self._root = tkinter.Toplevel()
+        self._root.grab_set()
+        self._system = system
 
     def apply(self):
-        # TO DO: Retrieved settings in window to create RadioConfig
-        cfg = config.RadioConfig()
-        return cfg
+        return None
