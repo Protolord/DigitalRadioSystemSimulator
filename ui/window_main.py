@@ -9,20 +9,22 @@ class WindowMain():
     def __init__(self, system):
         self._system = system
         self._root = tkinter.Tk()
+        self._root.option_add('*tearOff', False)
         # icon
         self._root.title('Digital Radio System Simulator')
         self._root.call('wm', 'iconphoto', self._root._w, tkinter.PhotoImage(file='ui/images/icon.gif'))
         # menubar
         menu = tkinter.Menu(self._root)
         self._root.config(menu=menu)
-        menu_config = tkinter.Menu(menu)
-        menu_config.add_command(label='Run', command=self._system.run, accelerator='F1')
-        menu_config.add_command(label='System Configuration', command=self.open_system_config, accelerator='F2')
-        menu_config.add_command(label='Radio Configuration', command=self.open_radio_config, accelerator='F3')
-        menu_config.add_command(label='Channel Configuration', command=self.open_channel_config, accelerator='F4')
+        menu_simulation = tkinter.Menu(menu)
+        menu_simulation.add_command(label='Run', command=self._system.run, accelerator='F1')
+        menu_simulation.add_separator()
+        menu_simulation.add_command(label='System Configuration', command=self.open_system_config, accelerator='F2')
+        menu_simulation.add_command(label='Radio Configuration', command=self.open_radio_config, accelerator='F3')
+        menu_simulation.add_command(label='Channel Configuration', command=self.open_channel_config, accelerator='F4')
         menu_help = tkinter.Menu(menu)
         menu_help.add_command(label='About')
-        menu.add_cascade(label='Simulation', menu=menu_config)
+        menu.add_cascade(label='Simulation', menu=menu_simulation)
         menu.add_cascade(label='Help', menu=menu_help)
         # key bindings
         self._root.bind('<F1>', self._system.run)
