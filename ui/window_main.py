@@ -9,10 +9,9 @@ class WindowMain():
     def __init__(self, system):
         self._system = system
         self._root = tkinter.Tk()
-        self._root.option_add('*tearOff', False)
-        # icon
         self._root.title('Digital Radio System Simulator')
         self._root.call('wm', 'iconphoto', self._root._w, tkinter.PhotoImage(file='ui/images/icon.gif'))
+        self._root.option_add('*tearOff', False)
         # menubar
         menu = tkinter.Menu(self._root)
         self._root.config(menu=menu)

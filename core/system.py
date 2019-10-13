@@ -12,7 +12,8 @@ class System():
         if not self._config.read('config.ini'):
             self._config.read_dict(self.default_config())
             self.write_config_file()
-        self._channel = channel.Channel()
+        self._channel = channel.Channel(self)
+        self._time = None
 
     @property
     def config(self):
@@ -22,11 +23,14 @@ class System():
     def channel(self):
         return self._channel
 
+    @property
+    def time(self):
+        return self._time
+
     def update_config(self, **kwargs):
         for section, section_value in kwargs.items():
             for key, value in section_value.items():
                 self._config.set(section, key, value)
-        self.write_config_file()
 
     def write_config_file(self):
         file = open('config.ini', 'w')
@@ -34,7 +38,11 @@ class System():
         file.close()
 
     def run(self):
-        return None
+        self._time = numpy.linspace(0,
+            self._config.getfloat('system', 'sim duration'),
+            self._config.getint('system', 'sampling rate'))
+        self._channel.reset()
+
 
     def default_config(self):
         return {

@@ -29,9 +29,10 @@ class WindowSystemConfig():
         self._entry_samplingrate.insert(0, system_config['sampling rate'])
         self._entry_simduration.insert(0, system_config['sim duration'])
         self._entry_samplingrate.focus()
+        # key bindings
         self._root.bind('<Return>', self.apply)
         self._root.bind('<Escape>', lambda event=None: self._root.destroy())
-        # grids
+        # geometry
         label_samplingrate.grid(row=0, column=0, sticky=tkinter.E, padx=(10, 0))
         label_simduration.grid(row=1, column=0, sticky=tkinter.E, padx=(10, 0))
         button_apply.grid(row=2, columnspan=2, pady=(4, 8))
@@ -72,4 +73,5 @@ class WindowSystemConfig():
                 'sim duration' : self._entry_simduration.get()
             }
         )
+        self._system.write_config_file()
         self._root.destroy()

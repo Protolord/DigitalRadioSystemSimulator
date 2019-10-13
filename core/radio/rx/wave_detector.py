@@ -10,7 +10,6 @@ def qam(time, signal, symbol_duration, carrier_freq):
     symbolstream_size = int(round(time[-1]/symbol_duration))
     symbolstream = numpy.zeros(symbolstream_size, dtype=complex)
     freq = sampling_rate*numpy.arange(0, int(sampling_rate/2))/sampling_rate
-    print()
     for i in range(symbolstream_size):
         length = int(time.size/symbolstream_size)
         t1 = i*length
