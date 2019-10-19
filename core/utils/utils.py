@@ -19,7 +19,13 @@ def zero_padder(bitstream, multiple):
     mod = bitstream.size%multiple
     if 0 == mod:
         return bitstream
-    return numpy.pad(bitstream, (0, multiple - mod))
+    return numpy.pad(bitstream, (0, multiple - mod), mode='constant')
+
+def find_index(array, value):
+    indices = numpy.where(array >= value)
+    if not indices[0].size:
+        return array.size - 1
+    return indices[0][0]
 
 def check_input_validity(data, range_values, data_type='int'):
     if data_type == 'int':

@@ -100,3 +100,16 @@ testdata_check_input_validity = [
 @pytest.mark.parametrize('expected, data, range_values, data_type', testdata_check_input_validity)
 def test_check_input_validity(expected, data, range_values, data_type):
     assert (expected == utils.check_input_validity(data, range_values, data_type))
+
+testdata_find_index = [
+    # numpy.linspace(0, 1, 10) = array([0., 0.111, 0.222, 0.333, 0.444, 0.556, 0.667, 0.777, 0.889, 1.])
+    (5, numpy.linspace(0, 1, 10),  0.5),
+    (0, numpy.linspace(0, 1, 10), -0.4),
+    (0, numpy.linspace(0, 1, 10),  0.0),
+    (9, numpy.linspace(0, 1, 10),  1.0),
+    (9, numpy.linspace(0, 1, 10),  1.5),
+]
+
+@pytest.mark.parametrize('expected, array, value', testdata_find_index)
+def test_find_index(expected, array, value):
+    assert (expected == utils.find_index(array, value))

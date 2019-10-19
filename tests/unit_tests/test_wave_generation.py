@@ -6,7 +6,6 @@ import core.utils.utils as utils
 
 def test_qam():
     time = numpy.linspace(0, 1, int(1e5))
-    symbol_duration = 0.25
     carrier_freq = 400
     angular_freq = 2*numpy.pi*carrier_freq
     expected_waveform_cos1 =  1*numpy.cos(angular_freq*time[0:25000])
@@ -22,5 +21,5 @@ def test_qam():
                                      expected_waveform_cos3 + expected_waveform_sin3,
                                      expected_waveform_cos4 + expected_waveform_sin4]).flatten()
     actual_symbolstream = numpy.array([1 + 2j, 3 - 4j, -5 + 6j, -7 - 8j])
-    actual_waveform = wave_generator.qam(time, actual_symbolstream, symbol_duration, carrier_freq)
+    actual_waveform = wave_generator.qam(time, actual_symbolstream, carrier_freq)
     assert (utils.isclose(expected_waveform, actual_waveform, atol=0.1, rtol=0.05)).all()

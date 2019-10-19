@@ -66,12 +66,12 @@ class WindowSystemConfig():
         if not utils.check_input_validity(self._entry_simduration.get(), (0.5, 100), 'float'):
             self.reset_msg('Invalid Simulation Duration')
             return
-        self._system.update_config(
+        self._system.config_update(
             system=
             {
                 'sampling rate': self._entry_samplingrate.get(),
                 'sim duration' : self._entry_simduration.get()
             }
         )
-        self._system.write_config_file()
+        self._system.config_writefile()
         self._root.destroy()

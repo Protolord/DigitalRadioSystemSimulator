@@ -12,7 +12,7 @@ TIME_STEP = SIM_DURATION/(SAMPLING_RATE - 1)
 @pytest.fixture(scope='module')
 def channel():
     system = core.system.System()
-    system.update_config(
+    system.config_update(
         system=
         {
             'sampling rate': str(SAMPLING_RATE),

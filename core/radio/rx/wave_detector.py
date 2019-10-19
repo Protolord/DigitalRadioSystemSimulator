@@ -1,9 +1,9 @@
-import cmath
-import math
 import numpy
 import core.utils.utils as utils
 
+
 DETECT_BANDWIDTH_HZ = 10
+SYMBOL_VALUE_THRESHOLD = 0.1
 
 def qam(time, signal, symbol_duration, carrier_freq):
     sampling_rate = int(round((time.size - 1)/(time[-1] - time[0])))
@@ -15,7 +15,9 @@ def qam(time, signal, symbol_duration, carrier_freq):
         t1 = i*length
         t2 = (i + 1)*length
         fft = 2*numpy.fft.fft(signal[t1:t2])/length
-        f1 = fft.size - int(symbol_duration*numpy.where(freq > carrier_freq + DETECT_BANDWIDTH_HZ/2)[0][0])
-        f2 = fft.size - int(symbol_duration*numpy.where(freq > carrier_freq - DETECT_BANDWIDTH_HZ/2)[0][0])
+        f1 = fft.size - int(symbol_duration*utils.find_index(freq, carrier_freq + DETECT_BANDWIDTH_HZ/2))
+        f2 = fft.size - int(symbol_duration*utils.find_index(freq, carrier_freq - DETECT_BANDWIDTH_HZ/2))
         symbolstream[i] = utils.max(fft[f1:f2])
+        if numpy.abs(symbolstream[i]) <= SYMBOL_VALUE_THRESHOLD:
+            return symbolstream[:i]
     return symbolstream

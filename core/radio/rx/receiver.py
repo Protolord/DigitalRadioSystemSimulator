@@ -5,19 +5,39 @@ import core.radio.rx.wave_detector as wave_detector
 
 class Receiver():
 
-    def __init__(self):
+    def __init__(self, system, name):
+        self._system = system
+        if not self._system.config.has_section(name):
+            self._system.config_update(**{name: system.config_default_radio()})
+        self._name = name
+        self._bitstream = None
+
+    def demodulate(self, symbolstream):
+        modulation = self._system.config[self._name]['modulation']
+        if 'BPSK' == modulation:
+            return iq_demapper.bpsk(symbolstream)
+        elif 'QPSK' == modulation:
+            return iq_demapper.qpsk(symbolstream)
+        elif '16QAM' == modulation:
+            return iq_demapper.qam16(symbolstream)
         return None
 
-    @classmethod
-    def demodulate(modulation_scheme, symbolstream):
-        return {
-            'BPSK' : iq_demapper.bpsk(symbolstream),
-            'QPSK' : iq_demapper.qpsk(symbolstream),
-            '16QAM': iq_demapper.qam16(symbolstream),
-        }[modulation_scheme]
+    @property
+    def name(self):
+        return self._name
 
-    def process(self, system):
-        signal = system.channel.get_signal()
+    @property
+    def bitstream(self):
+        return self._bitstream
 
+    def process(self):
+        symbol_duration = self._system.config.getfloat(self._name, 'symbol duration')
+        time_start = self._system.config.getfloat(self._name, 'start time')
+        signal = self._system.channel.signal_get(time_start, 1.0)
+        symbolstream = wave_detector.qam(self._system.time,
+                                         signal,
+                                         symbol_duration,
+                                         self._system.config.getfloat(self._name, 'carrier frequency'))
+        self._bitstream = self.demodulate(symbolstream)
 
 

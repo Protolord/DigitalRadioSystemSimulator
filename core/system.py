@@ -1,5 +1,6 @@
 import configparser
 import numpy
+import sys
 import core.radio.tx.transmitter as tx
 import core.radio.rx.receiver as rx
 import core.channel.channel as channel
@@ -9,11 +10,14 @@ class System():
 
     def __init__(self):
         self._config = configparser.ConfigParser()
-        if not self._config.read('config.ini'):
-            self._config.read_dict(self.default_config())
-            self.write_config_file()
+        if 'pytest' in sys.modules:
+            self._config.read_dict(self.config_default())
+        elif not self._config.read('config.ini'):
+            self._config.read_dict(self.config_default())
+            self.config_writefile()
         self._channel = channel.Channel(self)
         self._time = None
+        self._radios = {}
 
     @property
     def config(self):
@@ -27,28 +31,47 @@ class System():
     def time(self):
         return self._time
 
-    def update_config(self, **kwargs):
-        for section, section_value in kwargs.items():
-            for key, value in section_value.items():
-                self._config.set(section, key, value)
+    def radio_add(self, radio):
+        self._radios[radio.name] = radio
 
-    def write_config_file(self):
-        file = open('config.ini', 'w')
-        self._config.write(file)
-        file.close()
+    def radio_get(self, name):
+        self._radios[name]
 
     def run(self):
         self._time = numpy.linspace(0,
             self._config.getfloat('system', 'sim duration'),
             self._config.getint('system', 'sampling rate'))
         self._channel.reset()
+        for name in sorted(self._radios, reverse=True):
+            self._radios[name].process()
 
+    def config_update(self, **kwargs):
+        for section, section_value in kwargs.items():
+            if not self._config.has_section(section):
+                self._config.add_section(section)
+            for key, value in section_value.items():
+                self._config.set(section, key, value)
 
-    def default_config(self):
+    def config_writefile(self):
+        file = open('config.ini', 'w')
+        self._config.write(file)
+        file.close()
+
+    @classmethod
+    def config_default(self):
         return {
             'system':
             {
-                'sampling rate': 1000000,
-                'sim duration' : 1.0
-            }
+                'sampling rate': '1000000',
+                'sim duration' : '1.0'
+            },
+        }
+
+    @classmethod
+    def config_default_radio(self):
+        return {
+            'carrier frequency': '100',
+            'modulation': 'BPSK',
+            'start time': '0',
+            'symbol duration': '0.1'
         }
