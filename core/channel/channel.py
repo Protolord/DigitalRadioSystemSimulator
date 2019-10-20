@@ -27,6 +27,6 @@ class Channel():
     def signal_add(self, signal, time_start):
         if self._signal is None:
             return
-        t1 = int(numpy.where(self._system.time >= time_start)[0][0])
+        t1 = utils.find_index(self._system.time, time_start)
         t2 = min(t1 + signal.size, self._system.time.size)
         self._signal[t1:t2] += signal[:t2 - t1]

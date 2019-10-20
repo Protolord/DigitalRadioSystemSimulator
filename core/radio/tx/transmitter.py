@@ -47,6 +47,7 @@ class Transmitter():
         t2 = utils.find_index(self._system.time, time_end) + 1
         signal = wave_generator.qam(self._system.time[t1:t2],
                                     symbolstream,
+                                    symbol_duration,
                                     self._system.config.getfloat(self._name, 'carrier frequency'))
         self._system.channel.signal_add(signal, time_start)
 
