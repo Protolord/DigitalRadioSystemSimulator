@@ -1,5 +1,5 @@
 import core.system as core
-import ui.window_main as ui
+import ui.main_window.window_main as ui
 
 def main():
     system = core.System()

@@ -14,10 +14,20 @@ class System():
             self._config.read_dict(self.config_default())
         elif not self._config.read('config.ini'):
             self._config.read_dict(self.config_default())
+            self._config_update(
+                tx=self.config_default_radio(),
+                rx=self.config_default_radio()
+            )
             self.config_writefile()
         self._channel = channel.Channel(self)
         self._time = None
         self._radios = {}
+        for section, section_value in dict(self._config).items():
+            if 'tx' == section[:2]:
+                self._radios[section] = tx.Transmitter(self, section)
+            elif 'rx' == section[:2]:
+                self._radios[section] = rx.Receiver(self, section)
+        print(self._radios)
 
     @property
     def config(self):
@@ -30,6 +40,10 @@ class System():
     @property
     def time(self):
         return self._time
+
+    @property
+    def radios(self):
+        return self._radios
 
     def radio_add(self, radio):
         self._radios[radio.name] = radio

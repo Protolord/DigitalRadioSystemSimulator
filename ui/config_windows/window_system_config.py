@@ -33,12 +33,12 @@ class WindowSystemConfig():
         self._root.bind('<Return>', self.apply)
         self._root.bind('<Escape>', lambda event=None: self._root.destroy())
         # geometry
-        label_samplingrate.grid(row=0, column=0, sticky=tkinter.E, padx=(10, 0))
-        label_simduration.grid(row=1, column=0, sticky=tkinter.E, padx=(10, 0))
+        label_samplingrate.grid(row=0, column=0, sticky='E', padx=(10, 0))
+        label_simduration.grid(row=1, column=0, sticky='E', padx=(10, 0))
         button_apply.grid(row=2, columnspan=2, pady=(4, 8))
         self._entry_samplingrate.grid(row=0, column=1, padx=(0, 10))
         self._entry_simduration.grid(row=1, column=1, padx=(0, 10))
-        self._label_msg.grid(row=3, columnspan=2, sticky=tkinter.W, pady=(2, 0))
+        self._label_msg.grid(row=3, columnspan=2, sticky='W', pady=(2, 0))
         self._label_msg.grid_remove()
 
     def reset_msg(self, text):
