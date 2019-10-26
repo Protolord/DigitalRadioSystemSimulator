@@ -15,7 +15,8 @@ class WindowWorkspace():
 
     def __init__(self, system, window_main):
         self._system = system
-        self._frame = tkinter.ttk.Frame(window_main, relief=tkinter.SUNKEN)
+        self._main = window_main
+        self._frame = tkinter.ttk.Frame(window_main.window, relief=tkinter.SUNKEN)
         self._frame.configure(width=main.WIDTH, height=main.HEIGHT//2)
 
     @property
@@ -37,7 +38,7 @@ class WindowWorkspace():
     def render_channel(self, span):
         label_channel = tkinter.Label(self._frame, text='Channel', relief=utils.RELIEF)
         utils.bind_mouseover(label_channel)
-        utils.bind_mouseclick(label_channel, self.open_channel)
+        utils.bind_mouseclick(label_channel, self._main.open_channel)
         label_channel.configure(width=CHANNEL_WIDTH)
         label_channel.grid(row=0, column=7, rowspan=span, sticky='NS')
 
@@ -56,12 +57,12 @@ class WindowWorkspace():
         utils.bind_mouseover(label_symbolstream)
         utils.bind_mouseover(label_wavegenerator)
         utils.bind_mouseover(label_signal)
-        utils.bind_mouseclick(label_inputbox, self.open_inputbox, radio.name)
-        utils.bind_mouseclick(label_bitstream, self.open_bitstream, radio.name)
-        utils.bind_mouseclick(label_iqmapper, self.open_iqmapping, radio.name)
-        utils.bind_mouseclick(label_symbolstream, self.open_symbolstream, radio.name)
-        utils.bind_mouseclick(label_wavegenerator, self.open_wavetransfom, radio.name)
-        utils.bind_mouseclick(label_signal, self.open_signal, radio.name)
+        utils.bind_mouseclick(label_inputbox, self._main.open_inputbox, radio.name)
+        utils.bind_mouseclick(label_bitstream, self._main.open_bitstream, radio.name)
+        utils.bind_mouseclick(label_iqmapper, self._main.open_iqmapping, radio.name)
+        utils.bind_mouseclick(label_symbolstream, self._main.open_symbolstream, radio.name)
+        utils.bind_mouseclick(label_wavegenerator, self._main.open_wavetransform, radio.name)
+        utils.bind_mouseclick(label_signal, self._main.open_signal, radio.name)
         # size
         label_inputbox.configure(width=LAYER_WIDTH, height=LAYER_HEIGHT)
         label_bitstream.configure(width=DATASTREAM_WIDTH, height=DATASTREAM_HEIGHT)
@@ -85,7 +86,7 @@ class WindowWorkspace():
         label_iqdemapper = tkinter.Label(self._frame, text='In-phase & Quadrature Demapper', relief=utils.RELIEF)
         label_bitstream = tkinter.Label(self._frame, text='Bitstream', relief=utils.RELIEF)
         label_outputbox = tkinter.Label(self._frame, text='Output Data', relief=utils.RELIEF)
-        label_name = tkinter.Label(self._frame, text=radio.name)
+        label_name = tkinter.ttk.Label(self._frame, text=radio.name)
         # key bindings
         utils.bind_mouseover(label_signal)
         utils.bind_mouseover(label_wavedetector)
@@ -93,12 +94,12 @@ class WindowWorkspace():
         utils.bind_mouseover(label_iqdemapper)
         utils.bind_mouseover(label_bitstream)
         utils.bind_mouseover(label_outputbox)
-        utils.bind_mouseclick(label_signal, self.open_signal, radio.name)
-        utils.bind_mouseclick(label_wavedetector, self.open_wavetransfom, radio.name)
-        utils.bind_mouseclick(label_symbolstream, self.open_symbolstream, radio.name)
-        utils.bind_mouseclick(label_iqdemapper, self.open_iqmapping, radio.name)
-        utils.bind_mouseclick(label_bitstream, self.open_bitstream, radio.name)
-        utils.bind_mouseclick(label_outputbox, self.open_outputbox, radio.name)
+        utils.bind_mouseclick(label_signal, self._main.open_signal, radio.name)
+        utils.bind_mouseclick(label_wavedetector, self._main.open_wavetransform, radio.name)
+        utils.bind_mouseclick(label_symbolstream, self._main.open_symbolstream, radio.name)
+        utils.bind_mouseclick(label_iqdemapper, self._main.open_iqmapping, radio.name)
+        utils.bind_mouseclick(label_bitstream, self._main.open_bitstream, radio.name)
+        utils.bind_mouseclick(label_outputbox, self._main.open_outputbox, radio.name)
         # size
         label_signal.configure(width=DATASTREAM_WIDTH, height=DATASTREAM_HEIGHT)
         label_wavedetector.configure(width=LAYER_WIDTH, height=LAYER_HEIGHT, wraplength=WRAP_LENGTH)
@@ -114,27 +115,3 @@ class WindowWorkspace():
         label_bitstream.grid(row=row, column=12)
         label_outputbox.grid(row=row, column=13)
         label_name.grid(row=row, column=14, padx=(0, 5))
-
-    def open_channel(self, event):
-        print('Clicked Channel')
-
-    def open_iqmapping(self, event, radio_name):
-        print(f'Clicked IQ mapping for {radio_name}')
-
-    def open_wavetransfom(self, event, radio_name):
-        print(f'Clicked wave transformation for {radio_name}')
-
-    def open_inputbox(self, event, radio_name):
-        print(f'Clicked Button{event.num} inputbox for {radio_name}')
-
-    def open_outputbox(self, event, radio_name):
-        print(f'Clicked Button{event.num} output for {radio_name}')
-
-    def open_signal(self, event, radio_name):
-        print(f'Clicked Button{event.num} signal for {radio_name}')
-
-    def open_symbolstream(self, event, radio_name):
-        print(f'Clicked Button{event.num} symbol stream for {radio_name}')
-
-    def open_bitstream(self, event, radio_name):
-        print(f'Clicked Button{event.num} bitstream for {radio_name}')

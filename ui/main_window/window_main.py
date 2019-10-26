@@ -4,6 +4,7 @@ import ui.config_windows.window_channel_config as channel
 import ui.config_windows.window_radio_config as radio
 import ui.config_windows.window_system_config as system
 import ui.main_window.window_workspace as workspace
+import ui.main_window.window_diagram as diagram
 
 
 WIDTH = 1000
@@ -18,15 +19,11 @@ class WindowMain():
         self._root.call('wm', 'iconphoto', self._root._w, tkinter.PhotoImage(file='ui/images/icon.gif'))
         self._root.option_add('*tearOff', False)
         # window
-        window_main = tkinter.ttk.PanedWindow(self._root, orient=tkinter.VERTICAL)
-        self._window_workspace = workspace.WindowWorkspace(system, window_main)
-        self._window_diagram = tkinter.ttk.PanedWindow(window_main, orient=tkinter.HORIZONTAL)
-        window_main.add(self._window_workspace.frame, weight=1)
-        window_main.add(self._window_diagram, weight=1)
-        self._frame_left_diagram = tkinter.ttk.Frame(self._window_diagram, relief=tkinter.SUNKEN)
-        self._frame_right_diagram = tkinter.ttk.Frame(self._window_diagram, relief=tkinter.SUNKEN)
-        self._window_diagram.add(self._frame_left_diagram, weight=1)
-        self._window_diagram.add(self._frame_right_diagram, weight=1)
+        self._window = tkinter.ttk.PanedWindow(self._root, orient=tkinter.VERTICAL)
+        self._window_workspace = workspace.WindowWorkspace(system, self)
+        self._window_diagram = diagram.WindowDiagram(system, self)
+        self._window.add(self._window_workspace.frame, weight=1)
+        self._window.add(self._window_diagram.window, weight=1)
         self._window_workspace.render()
         # menubar
         menu = tkinter.Menu(self._root)
@@ -47,9 +44,11 @@ class WindowMain():
         self._root.bind('<F3>', self.open_radio_config)
         self._root.bind('<F4>', self.open_channel_config)
         # geometry
-        window_main.pack(fill=tkinter.BOTH, expand=True)
-        self._frame_left_diagram.configure(width=WIDTH//2, height=HEIGHT//2)
-        self._frame_right_diagram.configure(width=WIDTH//2, height=HEIGHT//2)
+        self._window.pack(fill=tkinter.BOTH, expand=True)
+
+    @property
+    def window(self):
+        return self._window
 
     def run(self):
         self._root.mainloop()
@@ -62,3 +61,27 @@ class WindowMain():
 
     def open_channel_config(self, event=None):
         channel.WindowChannelConfig(self._system)
+
+    def open_channel(self, event):
+        self._window_diagram.render_channel(event)
+
+    def open_inputbox(self, event, radio_name):
+        self._window_diagram.render_inputbox(event, radio_name)
+
+    def open_outputbox(self, event, radio_name):
+        self._window_diagram.render_outputbox(event, radio_name)
+
+    def open_bitstream(self, event, radio_name):
+        self._window_diagram.render_bitstream(event, radio_name)
+
+    def open_symbolstream(self, event, radio_name):
+        self._window_diagram.render_symbolstream(event, radio_name)
+
+    def open_signal(self, event, radio_name):
+        self._window_diagram.render_signal(event, radio_name)
+
+    def open_iqmapping(self, event, radio_name):
+        self._window_diagram.render_iqmapping(event, radio_name)
+
+    def open_wavetransform(self, event, radio_name):
+        self._window_diagram.render_wavetransform(event, radio_name)
