@@ -19,15 +19,15 @@ class System():
                 rx=self.config_default_radio()
             )
             self.config_writefile()
-        self._channel = channel.Channel(self)
         self._time = None
+        self._diagram = None
+        self._channel = channel.Channel(self)
         self._radios = {}
         for section, section_value in dict(self._config).items():
             if 'tx' == section[:2]:
                 self._radios[section] = tx.Transmitter(self, section)
             elif 'rx' == section[:2]:
                 self._radios[section] = rx.Receiver(self, section)
-        print(self._radios)
 
     @property
     def config(self):
@@ -45,19 +45,29 @@ class System():
     def radios(self):
         return self._radios
 
+    @property
+    def diagram(self):
+        return self._diagram
+
+    @diagram.setter
+    def diagram(self, value):
+        self._diagram = value
+
     def radio_add(self, radio):
-        self._radios[radio.name] = radio
+        self._radios[str(radio)] = radio
 
     def radio_get(self, name):
         self._radios[name]
 
-    def run(self):
+    def run(self, event=None):
         self._time = numpy.linspace(0,
             self._config.getfloat('system', 'sim duration'),
             self._config.getint('system', 'sampling rate'))
         self._channel.reset()
         for name in sorted(self._radios, reverse=True):
             self._radios[name].process()
+        if self._diagram is not None:
+            self._diagram.render_afterrun()
 
     def config_update(self, **kwargs):
         for section, section_value in kwargs.items():

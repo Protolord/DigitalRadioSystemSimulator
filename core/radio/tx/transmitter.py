@@ -27,10 +27,6 @@ class Transmitter():
         return None
 
     @property
-    def name(self):
-        return self._name
-
-    @property
     def bitstream(self):
         return self._bitstream
 
@@ -38,17 +34,21 @@ class Transmitter():
     def bitstream(self, value):
         self._bitstream = value
 
+    def __str__(self):
+        return self._name
+
     def process(self):
-        symbol_duration = self._system.config.getfloat(self._name, 'symbol duration')
-        symbolstream = self.modulate()
-        time_start = self._system.config.getfloat(self._name, 'start time')
-        time_end = time_start + symbolstream.size*symbol_duration
-        t1 = utils.find_index(self._system.time, time_start)
-        t2 = utils.find_index(self._system.time, time_end) + 1
-        signal = wave_generator.qam(self._system.time[t1:t2],
-                                    symbolstream,
-                                    symbol_duration,
-                                    self._system.config.getfloat(self._name, 'carrier frequency'))
-        self._system.channel.signal_add(signal, time_start)
+        if self._bitstream is not None:
+            symbol_duration = self._system.config.getfloat(self._name, 'symbol duration')
+            symbolstream = self.modulate()
+            time_start = self._system.config.getfloat(self._name, 'start time')
+            time_end = time_start + symbolstream.size*symbol_duration
+            t1 = utils.find_index(self._system.time, time_start)
+            t2 = utils.find_index(self._system.time, time_end) + 1
+            signal = wave_generator.qam(self._system.time[t1:t2],
+                                        symbolstream,
+                                        symbol_duration,
+                                        self._system.config.getfloat(self._name, 'carrier frequency'))
+            self._system.channel.signal_add(signal, time_start)
 
 

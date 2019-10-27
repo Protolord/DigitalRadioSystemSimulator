@@ -23,12 +23,11 @@ class Receiver():
         return None
 
     @property
-    def name(self):
-        return self._name
-
-    @property
     def bitstream(self):
         return self._bitstream
+
+    def __str__(self):
+        return self._name
 
     def process(self):
         symbol_duration = self._system.config.getfloat(self._name, 'symbol duration')

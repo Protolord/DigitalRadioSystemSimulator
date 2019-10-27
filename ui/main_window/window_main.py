@@ -20,11 +20,12 @@ class WindowMain():
         self._root.option_add('*tearOff', False)
         # window
         self._window = tkinter.ttk.PanedWindow(self._root, orient=tkinter.VERTICAL)
-        self._window_workspace = workspace.WindowWorkspace(system, self)
         self._window_diagram = diagram.WindowDiagram(system, self)
-        self._window.add(self._window_workspace.frame, weight=1)
-        self._window.add(self._window_diagram.window, weight=1)
+        self._window_workspace = workspace.WindowWorkspace(system, self, self._window_diagram)
+        self._window.add(self._window_workspace.root, weight=1)
+        self._window.add(self._window_diagram.root, weight=1)
         self._window_workspace.render()
+        self._system.diagram = self._window_diagram
         # menubar
         menu = tkinter.Menu(self._root)
         self._root.config(menu=menu)
@@ -61,27 +62,3 @@ class WindowMain():
 
     def open_channel_config(self, event=None):
         channel.WindowChannelConfig(self._system)
-
-    def open_channel(self, event):
-        self._window_diagram.render_channel(event)
-
-    def open_inputbox(self, event, radio_name):
-        self._window_diagram.render_inputbox(event, radio_name)
-
-    def open_outputbox(self, event, radio_name):
-        self._window_diagram.render_outputbox(event, radio_name)
-
-    def open_bitstream(self, event, radio_name):
-        self._window_diagram.render_bitstream(event, radio_name)
-
-    def open_symbolstream(self, event, radio_name):
-        self._window_diagram.render_symbolstream(event, radio_name)
-
-    def open_signal(self, event, radio_name):
-        self._window_diagram.render_signal(event, radio_name)
-
-    def open_iqmapping(self, event, radio_name):
-        self._window_diagram.render_iqmapping(event, radio_name)
-
-    def open_wavetransform(self, event, radio_name):
-        self._window_diagram.render_wavetransform(event, radio_name)

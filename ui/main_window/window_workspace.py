@@ -13,15 +13,16 @@ CHANNEL_WIDTH = 15
 
 class WindowWorkspace():
 
-    def __init__(self, system, window_main):
+    def __init__(self, system, window_main, window_diagram):
         self._system = system
         self._main = window_main
-        self._frame = tkinter.ttk.Frame(window_main.window, relief=tkinter.SUNKEN)
-        self._frame.configure(width=main.WIDTH, height=main.HEIGHT//2)
+        self._diagram = window_diagram
+        self._root = tkinter.ttk.Frame(window_main.window, relief=tkinter.SUNKEN)
+        self._root.configure(width=main.WIDTH, height=main.HEIGHT//2)
 
     @property
-    def frame(self):
-        return self._frame
+    def root(self):
+        return self._root
 
     def render(self):
         tx_count = 0
@@ -36,20 +37,20 @@ class WindowWorkspace():
         self.render_channel(span=max(tx_count, rx_count))
 
     def render_channel(self, span):
-        label_channel = tkinter.Label(self._frame, text='Channel', relief=utils.RELIEF)
+        label_channel = tkinter.Label(self._root, text='Channel', relief=utils.RELIEF)
         utils.bind_mouseover(label_channel)
-        utils.bind_mouseclick(label_channel, self._main.open_channel)
+        utils.bind_mouseclick(label_channel, self._diagram.render_channel)
         label_channel.configure(width=CHANNEL_WIDTH)
         label_channel.grid(row=0, column=7, rowspan=span, sticky='NS')
 
     def render_tx_radio(self, radio, row):
-        label_name = tkinter.ttk.Label(self._frame, text=radio.name)
-        label_inputbox = tkinter.Label(self._frame, text='Input Data', relief=utils.RELIEF)
-        label_bitstream = tkinter.Label(self._frame, text='Bitstream', relief=utils.RELIEF)
-        label_iqmapper = tkinter.Label(self._frame, text='In-phase & Quadrature Mapper', relief=utils.RELIEF)
-        label_symbolstream = tkinter.Label(self._frame, text='Symbol Stream', relief=utils.RELIEF)
-        label_wavegenerator = tkinter.Label(self._frame, text='Waveform Generator', relief=utils.RELIEF)
-        label_signal = tkinter.Label(self._frame, text='Signal', relief=utils.RELIEF)
+        label_name = tkinter.ttk.Label(self._root, text=radio)
+        label_inputbox = tkinter.Label(self._root, text='Input Data', relief=utils.RELIEF)
+        label_bitstream = tkinter.Label(self._root, text='Bitstream', relief=utils.RELIEF)
+        label_iqmapper = tkinter.Label(self._root, text='In-phase & Quadrature Mapper', relief=utils.RELIEF)
+        label_symbolstream = tkinter.Label(self._root, text='Symbol Stream', relief=utils.RELIEF)
+        label_wavegenerator = tkinter.Label(self._root, text='Waveform Generator', relief=utils.RELIEF)
+        label_signal = tkinter.Label(self._root, text='Signal', relief=utils.RELIEF)
         # key bindings
         utils.bind_mouseover(label_inputbox)
         utils.bind_mouseover(label_bitstream)
@@ -57,12 +58,12 @@ class WindowWorkspace():
         utils.bind_mouseover(label_symbolstream)
         utils.bind_mouseover(label_wavegenerator)
         utils.bind_mouseover(label_signal)
-        utils.bind_mouseclick(label_inputbox, self._main.open_inputbox, radio.name)
-        utils.bind_mouseclick(label_bitstream, self._main.open_bitstream, radio.name)
-        utils.bind_mouseclick(label_iqmapper, self._main.open_iqmapping, radio.name)
-        utils.bind_mouseclick(label_symbolstream, self._main.open_symbolstream, radio.name)
-        utils.bind_mouseclick(label_wavegenerator, self._main.open_wavetransform, radio.name)
-        utils.bind_mouseclick(label_signal, self._main.open_signal, radio.name)
+        utils.bind_mouseclick(label_inputbox, self._diagram.render_inputbox, radio)
+        utils.bind_mouseclick(label_bitstream, self._diagram.render_bitstream, radio)
+        utils.bind_mouseclick(label_iqmapper, self._diagram.render_iqmapping, radio)
+        utils.bind_mouseclick(label_symbolstream, self._diagram.render_symbolstream, radio)
+        utils.bind_mouseclick(label_wavegenerator, self._diagram.render_wavetransform, radio)
+        utils.bind_mouseclick(label_signal, self._diagram.render_signal, radio)
         # size
         label_inputbox.configure(width=LAYER_WIDTH, height=LAYER_HEIGHT)
         label_bitstream.configure(width=DATASTREAM_WIDTH, height=DATASTREAM_HEIGHT)
@@ -80,13 +81,13 @@ class WindowWorkspace():
         label_signal.grid(row=row, column=6)
 
     def render_rx_radio(self, radio, row):
-        label_signal = tkinter.Label(self._frame, text='Signal', relief=utils.RELIEF)
-        label_wavedetector = tkinter.Label(self._frame, text='Waveform Detector', relief=utils.RELIEF)
-        label_symbolstream = tkinter.Label(self._frame, text='Symbol Stream', relief=utils.RELIEF)
-        label_iqdemapper = tkinter.Label(self._frame, text='In-phase & Quadrature Demapper', relief=utils.RELIEF)
-        label_bitstream = tkinter.Label(self._frame, text='Bitstream', relief=utils.RELIEF)
-        label_outputbox = tkinter.Label(self._frame, text='Output Data', relief=utils.RELIEF)
-        label_name = tkinter.ttk.Label(self._frame, text=radio.name)
+        label_signal = tkinter.Label(self._root, text='Signal', relief=utils.RELIEF)
+        label_wavedetector = tkinter.Label(self._root, text='Waveform Detector', relief=utils.RELIEF)
+        label_symbolstream = tkinter.Label(self._root, text='Symbol Stream', relief=utils.RELIEF)
+        label_iqdemapper = tkinter.Label(self._root, text='In-phase & Quadrature Demapper', relief=utils.RELIEF)
+        label_bitstream = tkinter.Label(self._root, text='Bitstream', relief=utils.RELIEF)
+        label_outputbox = tkinter.Label(self._root, text='Output Data', relief=utils.RELIEF)
+        label_name = tkinter.ttk.Label(self._root, text=radio)
         # key bindings
         utils.bind_mouseover(label_signal)
         utils.bind_mouseover(label_wavedetector)
@@ -94,12 +95,12 @@ class WindowWorkspace():
         utils.bind_mouseover(label_iqdemapper)
         utils.bind_mouseover(label_bitstream)
         utils.bind_mouseover(label_outputbox)
-        utils.bind_mouseclick(label_signal, self._main.open_signal, radio.name)
-        utils.bind_mouseclick(label_wavedetector, self._main.open_wavetransform, radio.name)
-        utils.bind_mouseclick(label_symbolstream, self._main.open_symbolstream, radio.name)
-        utils.bind_mouseclick(label_iqdemapper, self._main.open_iqmapping, radio.name)
-        utils.bind_mouseclick(label_bitstream, self._main.open_bitstream, radio.name)
-        utils.bind_mouseclick(label_outputbox, self._main.open_outputbox, radio.name)
+        utils.bind_mouseclick(label_signal, self._diagram.render_signal, radio)
+        utils.bind_mouseclick(label_wavedetector, self._diagram.render_wavetransform, radio)
+        utils.bind_mouseclick(label_symbolstream, self._diagram.render_symbolstream, radio)
+        utils.bind_mouseclick(label_iqdemapper, self._diagram.render_iqmapping, radio)
+        utils.bind_mouseclick(label_bitstream, self._diagram.render_bitstream, radio)
+        utils.bind_mouseclick(label_outputbox, self._diagram.render_outputbox, radio)
         # size
         label_signal.configure(width=DATASTREAM_WIDTH, height=DATASTREAM_HEIGHT)
         label_wavedetector.configure(width=LAYER_WIDTH, height=LAYER_HEIGHT, wraplength=WRAP_LENGTH)

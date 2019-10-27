@@ -27,6 +27,30 @@ def find_index(array, value):
         return array.size - 1
     return indices[0][0]
 
+def text_to_binary(text):
+    n = int.from_bytes(text.encode(), 'big')
+    return format(n, f'0{((n.bit_length() + 7)//8)*8}b')
+
+def binary_to_text(binary):
+    text = ''
+    size = 1
+    for i in range(0, len(binary), 8):
+        if size > 1:
+            size -= 1
+            continue
+        if '1' == binary[i]:
+            for j in range(1, 8):
+                if '0' == binary[i + j]:
+                    break
+                size += 1
+            for j in range(size - 1):
+                k = i + 8*(j + 1)
+                if '10' != binary[k : k + 2]:
+                    return text
+        n = int(binary[i : i + 8*size], 2)
+        text += n.to_bytes(size, 'big').decode()
+    return text
+
 def check_input_validity(data, range_values, data_type='int'):
     if data_type == 'int':
         try:
