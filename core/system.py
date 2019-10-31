@@ -60,9 +60,11 @@ class System():
         self._radios[name]
 
     def run(self, event=None):
+        sim_duration = self._config.getfloat('system', 'sim duration')
+        sampling_rate = self._config.getint('system', 'sampling rate')
         self._time = numpy.linspace(0,
-            self._config.getfloat('system', 'sim duration'),
-            self._config.getint('system', 'sampling rate'))
+            sim_duration,
+            int(sampling_rate*sim_duration))
         self._channel.reset()
         for name in sorted(self._radios, reverse=True):
             self._radios[name].process()
@@ -94,8 +96,8 @@ class System():
     @classmethod
     def config_default_radio(self):
         return {
-            'carrier frequency': '100',
+            'carrier frequency': '800',
             'modulation': 'BPSK',
             'start time': '0',
-            'symbol duration': '0.1'
+            'symbol duration': '0.005'
         }

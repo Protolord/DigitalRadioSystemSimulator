@@ -1,7 +1,6 @@
 import pytest
 import numpy
 import core.system
-import core.utils.plotter as plotter
 
 
 # SAMPLING_RATE*SIM_DURATION is assumed to be divisible by four
