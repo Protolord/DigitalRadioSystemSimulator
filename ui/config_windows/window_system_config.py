@@ -8,21 +8,28 @@ FADE_COLOR_DELTA = 10
 INITIAL_FADE_DELAY = 600
 WINDOW_COLOR = 240
 
+
 class WindowSystemConfig():
 
     def __init__(self, system):
         self._root = tkinter.Toplevel()
         self._root.title('System Configuration')
-        self._root['background'] = '#'+ 3*f'{WINDOW_COLOR:02x}'
+        self._root['background'] = '#' + 3*f'{WINDOW_COLOR:02x}'
         self._root.grab_set()
         self._system = system
         self._msg_color = 0
         self._is_fading = False
         system_config = self._system.config['system']
         # widgets
-        label_samplingrate = tkinter.ttk.Label(self._root, text='Sampling Rate')
-        label_simduration = tkinter.ttk.Label(self._root, text='Simulation Duration')
-        button_apply = tkinter.ttk.Button(self._root, text='Apply', width=35, command=self.apply)
+        label_samplingrate = tkinter.ttk.Label(
+            self._root, text='Sampling Rate'
+        )
+        label_simduration = tkinter.ttk.Label(
+            self._root, text='Simulation Duration'
+        )
+        button_apply = tkinter.ttk.Button(
+            self._root, text='Apply', command=self.apply, width=35
+        )
         self._label_msg = tkinter.ttk.Label(self._root, text='')
         self._entry_samplingrate = tkinter.ttk.Entry(self._root, width=25)
         self._entry_simduration = tkinter.ttk.Entry(self._root, width=25)
@@ -44,7 +51,7 @@ class WindowSystemConfig():
     def reset_msg(self, text):
         self._msg_color = 0
         self._label_msg.grid()
-        self._label_msg['foreground'] = '#'+ 3*f'{self._msg_color:02x}'
+        self._label_msg['foreground'] = '#' + 3*f'{self._msg_color:02x}'
         self._label_msg['text'] = text
         if not self._is_fading:
             self._label_msg.after(INITIAL_FADE_DELAY, self.fade_msg)
@@ -56,21 +63,22 @@ class WindowSystemConfig():
             self._is_fading = False
         else:
             self._msg_color = self._msg_color + FADE_COLOR_DELTA
-            self._label_msg['foreground'] = '#'+ 3*f'{self._msg_color:02x}'
+            self._label_msg['foreground'] = '#' + 3*f'{self._msg_color:02x}'
             self._label_msg.after(FADE_TIMEOUT, self.fade_msg)
 
     def apply(self, event=None):
-        if not utils.check_input_validity(self._entry_samplingrate.get(), (1, 1e10), 'int'):
+        args = (self._entry_samplingrate.get(), (1, 1e10), 'int')
+        if not utils.check_input_validity(*args):
             self.reset_msg('Invalid Sampling Rate')
             return
-        if not utils.check_input_validity(self._entry_simduration.get(), (0.5, 100), 'float'):
+        args = (self._entry_simduration.get(), (0.5, 100), 'float')
+        if not utils.check_input_validity(*args):
             self.reset_msg('Invalid Simulation Duration')
             return
         self._system.config_update(
-            system=
-            {
+            system={
                 'sampling rate': self._entry_samplingrate.get(),
-                'sim duration' : self._entry_simduration.get()
+                'sim duration': self._entry_simduration.get()
             }
         )
         self._system.config_writefile()

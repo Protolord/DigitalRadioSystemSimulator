@@ -19,7 +19,7 @@ class Channel():
 
     def signal_get(self, time_start, time_end):
         if self._signal is None:
-            return
+            return None
         t1 = utils.find_index(self._system.time, time_start)
         t2 = utils.find_index(self._system.time, time_end) + 1
         return self._signal[t1:t2]

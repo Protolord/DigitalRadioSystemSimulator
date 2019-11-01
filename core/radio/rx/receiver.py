@@ -1,4 +1,3 @@
-import core.system as system
 import core.radio.rx.iq_demapper as iq_demapper
 import core.radio.rx.wave_detector as wave_detector
 
@@ -12,6 +11,13 @@ class Receiver():
         self._name = name
         self._bitstream = None
 
+    @property
+    def bitstream(self):
+        return self._bitstream
+
+    def __str__(self):
+        return self._name
+
     def demodulate(self, symbolstream):
         modulation = self._system.config[self._name]['modulation']
         if 'BPSK' == modulation:
@@ -22,21 +28,15 @@ class Receiver():
             return iq_demapper.qam16(symbolstream)
         return None
 
-    @property
-    def bitstream(self):
-        return self._bitstream
-
-    def __str__(self):
-        return self._name
-
     def process(self):
-        symbol_duration = self._system.config.getfloat(self._name, 'symbol duration')
-        time_start = self._system.config.getfloat(self._name, 'start time')
+        cfg = self._system.config
+        symbol_duration = cfg.getfloat(self._name, 'symbol duration')
+        time_start = cfg.getfloat(self._name, 'start time')
         signal = self._system.channel.signal_get(time_start, 1.0)
-        symbolstream = wave_detector.qam(self._system.time,
-                                         signal,
-                                         symbol_duration,
-                                         self._system.config.getfloat(self._name, 'carrier frequency'))
+        symbolstream = wave_detector.qam(
+            self._system.time,
+            signal,
+            symbol_duration,
+            cfg.getfloat(self._name, 'carrier frequency')
+        )
         self._bitstream = self.demodulate(symbolstream)
-
-

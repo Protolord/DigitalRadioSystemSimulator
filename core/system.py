@@ -1,6 +1,6 @@
+import sys
 import configparser
 import numpy
-import sys
 import core.radio.tx.transmitter as tx
 import core.radio.rx.receiver as rx
 import core.channel.channel as channel
@@ -14,7 +14,7 @@ class System():
             self._config.read_dict(self.config_default())
         elif not self._config.read('config.ini'):
             self._config.read_dict(self.config_default())
-            self._config_update(
+            self.config_update(
                 tx=self.config_default_radio(),
                 rx=self.config_default_radio()
             )
@@ -23,10 +23,10 @@ class System():
         self._diagram = None
         self._channel = channel.Channel(self)
         self._radios = {}
-        for section, section_value in dict(self._config).items():
-            if 'tx' == section[:2]:
+        for section in dict(self._config).keys():
+            if section.startswith('tx'):
                 self._radios[section] = tx.Transmitter(self, section)
-            elif 'rx' == section[:2]:
+            elif section.startswith('rx'):
                 self._radios[section] = rx.Receiver(self, section)
 
     @property
@@ -57,19 +57,20 @@ class System():
         self._radios[str(radio)] = radio
 
     def radio_get(self, name):
-        self._radios[name]
+        return self._radios[name]
 
     def run(self, event=None):
         sim_duration = self._config.getfloat('system', 'sim duration')
         sampling_rate = self._config.getint('system', 'sampling rate')
-        self._time = numpy.linspace(0,
+        self._time = numpy.linspace(
+            0,
             sim_duration,
             int(sampling_rate*sim_duration))
         self._channel.reset()
         for name in sorted(self._radios, reverse=True):
             self._radios[name].process()
         if self._diagram is not None:
-            self._diagram.render_afterrun()
+            self._diagram.repeat_render()
 
     def config_update(self, **kwargs):
         for section, section_value in kwargs.items():
@@ -84,17 +85,17 @@ class System():
         file.close()
 
     @classmethod
-    def config_default(self):
+    def config_default(cls):
         return {
             'system':
             {
                 'sampling rate': '1000000',
-                'sim duration' : '1.0'
+                'sim duration': '1.0'
             },
         }
 
     @classmethod
-    def config_default_radio(self):
+    def config_default_radio(cls):
         return {
             'carrier frequency': '800',
             'modulation': 'BPSK',

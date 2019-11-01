@@ -1,6 +1,6 @@
-import numpy
 import tkinter
 import tkinter.ttk
+import numpy
 import core.utils.utils as utils
 import ui.main_window.window_main as main
 
@@ -9,30 +9,32 @@ class WindowDiagram():
 
     def __init__(self, system, window_main):
         self._system = system
-        self._root = tkinter.ttk.PanedWindow(window_main.window, orient=tkinter.HORIZONTAL)
-        self._frame_left = tkinter.ttk.Frame(self._root, relief=tkinter.SUNKEN)
-        self._frame_right = tkinter.ttk.Frame(self._root, relief=tkinter.SUNKEN)
-        self._frame_left.configure(width=main.WIDTH//2, height=main.HEIGHT//2)
-        self._frame_right.configure(width=main.WIDTH//2, height=main.HEIGHT//2)
-        self._root.add(self._frame_left, weight=1)
-        self._root.add(self._frame_right, weight=1)
-        self._afterrun_process = {}
+        self._root = tkinter.ttk.PanedWindow(
+            window_main.window, orient=tkinter.HORIZONTAL
+        )
+        self._lframe = tkinter.ttk.Frame(self._root, relief=tkinter.SUNKEN)
+        self._rframe = tkinter.ttk.Frame(self._root, relief=tkinter.SUNKEN)
+        self._lframe.configure(width=main.WIDTH//2, height=main.HEIGHT//2)
+        self._rframe.configure(width=main.WIDTH//2, height=main.HEIGHT//2)
+        self._root.add(self._lframe, weight=1)
+        self._root.add(self._rframe, weight=1)
+        self._repeat_render_list = {}
 
     @property
     def root(self):
         return self._root
 
-    def get_frame(self, mouse_button, afterrun=None):
+    def get_frame(self, mouse_button, repeat_render=None):
         if 1 == mouse_button:
-            frame = self._frame_left
+            frame = self._lframe
         elif 3 == mouse_button:
-            frame = self._frame_right
+            frame = self._rframe
         for widget in frame.winfo_children():
             widget.destroy()
-        if afterrun is None:
-            self._afterrun_process.pop(mouse_button, None)
+        if repeat_render is None:
+            self._repeat_render_list.pop(mouse_button, None)
         else:
-            self._afterrun_process[mouse_button] = afterrun
+            self._repeat_render_list[mouse_button] = repeat_render
         return frame
 
     def text_init(self, widget_input, radio):
@@ -40,8 +42,8 @@ class WindowDiagram():
             binary = ''.join(str(bit) for bit in radio.bitstream.tolist())
             widget_input.insert(tkinter.END, utils.binary_to_text(binary))
 
-    def render_afterrun(self):
-        for key, value in self._afterrun_process.items():
+    def repeat_render(self):
+        for key, value in self._repeat_render_list.items():
             event = tkinter.Event()
             event.num = key
             eval(value[0])(event, value[1])
@@ -50,38 +52,43 @@ class WindowDiagram():
         print('Clicked Channel')
 
     def render_inputbox(self, event, radio):
-        frame = self.get_frame(event.num)
+        frame = self.get_frame(
+            event.num, repeat_render=('self.render_inputbox', radio)
+        )
         label_name = tkinter.ttk.Label(frame, text=f'{radio} input type:')
         combobox_datatype = tkinter.ttk.Combobox(frame, values=['Text'])
-        text_input = tkinter.Text(frame, height=10, width=65)
+        text_in = tkinter.Text(frame, height=10, width=65)
         button_apply = tkinter.ttk.Button(frame, text='Apply', width=50)
-        button_apply['command'] = lambda: self.apply_inputbox(text_input, radio)
+        button_apply['command'] = lambda: self.apply_inputbox(text_in, radio)
         combobox_datatype.current(0)
-        self.text_init(text_input, radio)
-        text_input.focus()
+        self.text_init(text_in, radio)
+        text_in.focus()
         # geometry
         label_name.grid(row=0, column=0, sticky='E', pady=(5, 5))
         combobox_datatype.grid(row=0, column=1, sticky='W')
-        text_input.grid(row=1, columnspan=2, padx=(10, 10), pady=(5, 5))
+        text_in.grid(row=1, columnspan=2, padx=(10, 10), pady=(5, 5))
         button_apply.grid(row=2, columnspan=2, sticky='S')
 
     def apply_inputbox(self, widget_input, radio):
         text = widget_input.get('1.0', 'end-1c')
         binary = utils.text_to_binary(text)
         radio.bitstream = numpy.array(list(binary), dtype=numpy.int8)
+        self.repeat_render()
 
     def render_outputbox(self, event, radio):
-        frame = self.get_frame(event.num, afterrun=('self.render_outputbox', radio))
+        frame = self.get_frame(
+            event.num, repeat_render=('self.render_outputbox', radio)
+        )
         label_name = tkinter.ttk.Label(frame, text=f'{radio} output type:')
         combobox_datatype = tkinter.ttk.Combobox(frame, values=['Text'])
-        text_output = tkinter.Text(frame, height=10, width=65)
+        text_out = tkinter.Text(frame, height=10, width=65)
         combobox_datatype.current(0)
-        self.text_init(text_output, radio)
-        text_output['state'] = 'disabled'
+        self.text_init(text_out, radio)
+        text_out['state'] = 'disabled'
         # geometry
         label_name.grid(row=0, column=0, sticky='E', pady=(5, 5))
         combobox_datatype.grid(row=0, column=1, sticky='W')
-        text_output.grid(row=1, columnspan=2, padx=(10, 10), pady=(5, 5))
+        text_out.grid(row=1, columnspan=2, padx=(10, 10), pady=(5, 5))
 
     def render_bitstream(self, event, radio):
         print(f'Clicked Button{event.num} bitstream for {radio}')

@@ -8,6 +8,6 @@ def qam(time, symbolstream, symbol_duration, carrier_freq):
     for i, symbol in enumerate(symbolstream):
         t1 = i*length
         t2 = (i + 1)*length
-        signal[t1:t2] = (symbol.real*numpy.cos(angular_freq*time[t1:t2]) +
-                         symbol.imag*numpy.sin(angular_freq*time[t1:t2]))
+        signal[t1:t2] = (symbol.real*numpy.cos(angular_freq*time[t1:t2])
+                         + symbol.imag*numpy.sin(angular_freq*time[t1:t2]))
     return signal
