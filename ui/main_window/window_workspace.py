@@ -45,13 +45,14 @@ class WindowWorkspace():
         tx_count = 0
         rx_count = 0
         for name, radio in self._system.radios.items():
-            if 'tx' == name[:2]:
+            if name.startswith('tx'):
                 self.render_tx_radio(radio, row=tx_count)
                 tx_count += 1
-            elif 'rx' == name[:2]:
+            elif name.startswith('rx'):
                 self.render_rx_radio(radio, row=rx_count)
                 rx_count += 1
-        self.render_channel(span=max(tx_count, rx_count))
+        if tx_count or rx_count:
+            self.render_channel(span=max(tx_count, rx_count))
 
     def render_channel(self, span):
         label_channel = tkinter.Label(
@@ -77,7 +78,6 @@ class WindowWorkspace():
         # bindings
         for label in (layers + streams):
             utils.bind_mouseover(label)
-        for label in (layers + streams):
             utils.bind_mouseclick(label, self._callbacks[label['text']], radio)
         # size and geometry
         label_name.grid(row=row, column=0, padx=(5, 0))
@@ -102,7 +102,6 @@ class WindowWorkspace():
         # key bindings
         for label in (layers + streams):
             utils.bind_mouseover(label)
-        for label in (layers + streams):
             utils.bind_mouseclick(label, self._callbacks[label['text']], radio)
         # size and geometry
         for i, label in enumerate(streams):

@@ -11,11 +11,12 @@ WINDOW_COLOR = 240
 
 class WindowSystemConfig():
 
-    def __init__(self, system):
+    def __init__(self, parent, system):
         self._root = tkinter.Toplevel()
         self._root.title('System Configuration')
         self._root['background'] = '#' + 3*f'{WINDOW_COLOR:02x}'
         self._root.grab_set()
+        self._root.transient(parent)
         self._system = system
         self._msg_color = 0
         self._is_fading = False
@@ -37,7 +38,7 @@ class WindowSystemConfig():
         self._entry_simduration.insert(0, system_config['sim duration'])
         self._entry_samplingrate.focus()
         # key bindings
-        self._root.bind('<Return>', self.apply)
+        self._root.bind('<Return>', lambda event=None: self.apply())
         self._root.bind('<Escape>', lambda event=None: self._root.destroy())
         # geometry
         label_samplingrate.grid(row=0, column=0, sticky='E', padx=(10, 0))
@@ -66,7 +67,7 @@ class WindowSystemConfig():
             self._label_msg['foreground'] = '#' + 3*f'{self._msg_color:02x}'
             self._label_msg.after(FADE_TIMEOUT, self.fade_msg)
 
-    def apply(self, event=None):
+    def apply(self):
         args = (self._entry_samplingrate.get(), (1, 1e10), 'int')
         if not utils.check_input_validity(*args):
             self.reset_msg('Invalid Sampling Rate')

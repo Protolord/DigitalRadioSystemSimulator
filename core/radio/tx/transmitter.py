@@ -23,6 +23,9 @@ class Transmitter():
     def __str__(self):
         return self._name
 
+    def reset(self):
+        self._bitstream = None
+
     def modulate(self):
         modulation = self._system.config[self._name]['modulation']
         if 'BPSK' == modulation:
@@ -45,10 +48,8 @@ class Transmitter():
         time_end = time_start + symbolstream.size*symbol_duration
         t1 = utils.find_index(self._system.time, time_start)
         t2 = utils.find_index(self._system.time, time_end) + 1
+        frequency = cfg.getfloat(self._name, 'carrier frequency')
         signal = wave_generator.qam(
-            self._system.time[t1:t2],
-            symbolstream,
-            symbol_duration,
-            cfg.getfloat(self._name, 'carrier frequency')
+            self._system.time[t1:t2], symbolstream, symbol_duration, frequency
         )
         self._system.channel.signal_add(signal, time_start)

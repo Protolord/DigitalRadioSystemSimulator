@@ -1,8 +1,8 @@
 import sys
 import configparser
 import numpy
-import core.radio.tx.transmitter as tx
-import core.radio.rx.receiver as rx
+import core.radio.tx.transmitter as transmitter
+import core.radio.rx.receiver as receiver
 import core.channel.channel as channel
 
 
@@ -19,15 +19,17 @@ class System():
                 rx=self.config_default_radio()
             )
             self.config_writefile()
+        self._running = False
         self._time = None
-        self._diagram = None
+        self._bar = None
+        self._thread_lock = None
         self._channel = channel.Channel(self)
         self._radios = {}
         for section in dict(self._config).keys():
             if section.startswith('tx'):
-                self._radios[section] = tx.Transmitter(self, section)
+                self._radios[section] = transmitter.Transmitter(self, section)
             elif section.startswith('rx'):
-                self._radios[section] = rx.Receiver(self, section)
+                self._radios[section] = receiver.Receiver(self, section)
 
     @property
     def config(self):
@@ -46,12 +48,23 @@ class System():
         return self._radios
 
     @property
-    def diagram(self):
-        return self._diagram
+    def running(self):
+        if self._thread_lock is None:
+            return self._running
+        else:
+            with self._thread_lock:
+                return self._running
 
-    @diagram.setter
-    def diagram(self, value):
-        self._diagram = value
+    @running.setter
+    def running(self, value):
+        if self._thread_lock is None:
+            self._running = value
+        else:
+            with self._thread_lock:
+                self._running = value
+            if not value:
+                self._thread_lock = None
+                self._bar = None
 
     def radio_add(self, radio):
         self._radios[str(radio)] = radio
@@ -59,18 +72,41 @@ class System():
     def radio_get(self, name):
         return self._radios[name]
 
-    def run(self, event=None):
+    def update_bar(self, status, value):
+        if self._bar is not None:
+            self._bar.update(status, value)
+
+    def run(self, bar=None, lock=None):
+        self._bar = bar
+        self._thread_lock = lock
+        self.running = True
         sim_duration = self._config.getfloat('system', 'sim duration')
         sampling_rate = self._config.getint('system', 'sampling rate')
         self._time = numpy.linspace(
-            0,
-            sim_duration,
-            int(sampling_rate*sim_duration))
+            0, sim_duration, int(sampling_rate*sim_duration)
+        )
         self._channel.reset()
-        for name in sorted(self._radios, reverse=True):
-            self._radios[name].process()
-        if self._diagram is not None:
-            self._diagram.repeat_render()
+        tx_list = [key for key in self._radios if 'tx' in key]
+        rx_list = [key for key in self._radios if 'rx' in key]
+        for i, tx in enumerate(tx_list):
+            if not self.running:
+                return
+            self.update_bar(f'Processing {tx}', 50*i/len(tx_list))
+            self._radios[tx].process()
+        for i, rx in enumerate(rx_list):
+            if not self.running:
+                break
+            self.update_bar(f'Processing {rx}', 50*i/len(rx_list) + 50)
+            self._radios[rx].process()
+        if not self.running:
+            for rx in rx_list:
+                self._radios[rx].reset()
+            return
+        self.update_bar('Simulation Complete', 100)
+        self.running = False
+
+    def run_stop(self):
+        self.running = False
 
     def config_update(self, **kwargs):
         for section, section_value in kwargs.items():

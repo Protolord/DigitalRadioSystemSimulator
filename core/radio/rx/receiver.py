@@ -18,6 +18,9 @@ class Receiver():
     def __str__(self):
         return self._name
 
+    def reset(self):
+        self._bitstream = None
+
     def demodulate(self, symbolstream):
         modulation = self._system.config[self._name]['modulation']
         if 'BPSK' == modulation:
@@ -33,10 +36,8 @@ class Receiver():
         symbol_duration = cfg.getfloat(self._name, 'symbol duration')
         time_start = cfg.getfloat(self._name, 'start time')
         signal = self._system.channel.signal_get(time_start, 1.0)
+        frequency = cfg.getfloat(self._name, 'carrier frequency')
         symbolstream = wave_detector.qam(
-            self._system.time,
-            signal,
-            symbol_duration,
-            cfg.getfloat(self._name, 'carrier frequency')
+            self._system.time, signal, symbol_duration, frequency
         )
         self._bitstream = self.demodulate(symbolstream)
