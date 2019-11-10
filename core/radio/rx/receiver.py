@@ -9,7 +9,7 @@ class Receiver():
         if not self._system.config.has_section(name):
             self._system.config_update(**{name: system.config_default_radio()})
         self._name = name
-        self._bitstream = None
+        self.reset()
 
     @property
     def bitstream(self):
@@ -20,6 +20,7 @@ class Receiver():
 
     def reset(self):
         self._bitstream = None
+        self._symbolstream = None
 
     def demodulate(self, symbolstream):
         modulation = self._system.config[self._name]['modulation']
@@ -37,7 +38,7 @@ class Receiver():
         time_start = cfg.getfloat(self._name, 'start time')
         signal = self._system.channel.signal_get(time_start, 1.0)
         frequency = cfg.getfloat(self._name, 'carrier frequency')
-        symbolstream = wave_detector.qam(
+        self._symbolstream = wave_detector.qam(
             self._system.time, signal, symbol_duration, frequency
         )
-        self._bitstream = self.demodulate(symbolstream)
+        self._bitstream = self.demodulate(self._symbolstream)

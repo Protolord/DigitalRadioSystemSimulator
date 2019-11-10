@@ -1,7 +1,7 @@
 import tkinter
 import tkinter.ttk
 import ui.main_window.window_main as main
-import ui.utils_bind as utils
+import ui.utils.utils_bind as utils
 
 
 WRAP_LENGTH = 70
@@ -38,7 +38,7 @@ class WindowWorkspace():
     def root(self):
         return self._root
 
-    def create_label(self, txt):
+    def label_init(self, txt):
         return tkinter.Label(self._root, text=txt, relief=utils.RELIEF)
 
     def render(self):
@@ -62,17 +62,18 @@ class WindowWorkspace():
         utils.bind_mouseclick(
             label_channel, self._callbacks[label_channel['text']]
         )
+        self._root.grid_columnconfigure(7, weight=1)
         label_channel.configure(width=CHANNEL_WIDTH)
-        label_channel.grid(row=0, column=7, rowspan=span, sticky='NS')
+        label_channel.grid(row=0, column=7, rowspan=span, sticky='NSEW')
 
     def render_tx_radio(self, radio, row):
         label_name = tkinter.ttk.Label(self._root, text=radio)
-        label_inputbox = self.create_label('Input Data')
-        label_bitstream = self.create_label('Bitstream')
-        label_iqmapper = self.create_label('In-phase & Quadrature Mapper')
-        label_symbolstream = self.create_label('Symbol Stream')
-        label_wavegenerator = self.create_label('Waveform Generator')
-        label_signal = self.create_label('Signal')
+        label_inputbox = self.label_init('Input Data')
+        label_bitstream = self.label_init('Bitstream')
+        label_iqmapper = self.label_init('In-phase & Quadrature Mapper')
+        label_symbolstream = self.label_init('Symbol Stream')
+        label_wavegenerator = self.label_init('Waveform Generator')
+        label_signal = self.label_init('Signal')
         layers = [label_inputbox, label_iqmapper, label_wavegenerator]
         streams = [label_bitstream, label_symbolstream, label_signal]
         # bindings
@@ -82,20 +83,24 @@ class WindowWorkspace():
         # size and geometry
         label_name.grid(row=row, column=0, padx=(5, 0))
         for i, label in enumerate(layers):
+            self._root.grid_rowconfigure(row, weight=1)
+            self._root.grid_columnconfigure(2*i + 1, weight=1)
             label.configure(width=LAYER_WIDTH, height=LAYER_HEIGHT)
             label.configure(wraplength=WRAP_LENGTH)
-            label.grid(row=row, column=2*i + 1)
+            label.grid(row=row, column=2*i + 1, sticky='NSEW')
         for i, label in enumerate(streams):
+            self._root.grid_rowconfigure(row, weight=1)
+            self._root.grid_columnconfigure(2*i + 2, weight=1)
             label.configure(width=STREAM_WIDTH, height=STREAM_HEIGHT)
-            label.grid(row=row, column=2*i + 2)
+            label.grid(row=row, column=2*i + 2, sticky='EW')
 
     def render_rx_radio(self, radio, row):
-        label_signal = self.create_label('Signal')
-        label_wavedetector = self.create_label('Waveform Detector')
-        label_symbolstream = self.create_label('Symbol Stream')
-        label_iqdemapper = self.create_label('In-phase & Quadrature Demapper')
-        label_bitstream = self.create_label('Bitstream')
-        label_outputbox = self.create_label('Output Data')
+        label_signal = self.label_init('Signal')
+        label_wavedetector = self.label_init('Waveform Detector')
+        label_symbolstream = self.label_init('Symbol Stream')
+        label_iqdemapper = self.label_init('In-phase & Quadrature Demapper')
+        label_bitstream = self.label_init('Bitstream')
+        label_outputbox = self.label_init('Output Data')
         label_name = tkinter.ttk.Label(self._root, text=radio)
         streams = [label_signal, label_symbolstream, label_bitstream]
         layers = [label_wavedetector, label_iqdemapper, label_outputbox]
@@ -105,10 +110,14 @@ class WindowWorkspace():
             utils.bind_mouseclick(label, self._callbacks[label['text']], radio)
         # size and geometry
         for i, label in enumerate(streams):
+            self._root.grid_rowconfigure(row, weight=1)
+            self._root.grid_columnconfigure(2*i + 8, weight=1)
             label.configure(width=STREAM_WIDTH, height=STREAM_HEIGHT)
-            label.grid(row=row, column=2*i + 8)
+            label.grid(row=row, column=2*i + 8, sticky='EW')
         for i, label in enumerate(layers):
+            self._root.grid_rowconfigure(row, weight=1)
+            self._root.grid_columnconfigure(2*i + 9, weight=1)
             label.configure(width=LAYER_WIDTH, height=LAYER_HEIGHT)
             label.configure(wraplength=WRAP_LENGTH)
-            label.grid(row=row, column=2*i + 9)
+            label.grid(row=row, column=2*i + 9, sticky='NSEW')
         label_name.grid(row=row, column=14, padx=(0, 5))

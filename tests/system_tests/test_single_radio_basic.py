@@ -1,12 +1,8 @@
 import pytest
 import numpy
-import core.system
-import core.radio.tx.transmitter as tx
-import core.radio.rx.receiver as rx
 
 
-SAMPLING_RATE = 1000000
-SIM_DURATION = 1.0
+NUM_OF_RADIOS = 1
 
 
 testconfig_radios = [
@@ -29,77 +25,53 @@ testconfig_radios = [
 ]
 
 
-@pytest.fixture(scope='module')
-def system():
-    system = core.system.System()
-    system.config_update(
-        system={
-            'sampling rate': str(SAMPLING_RATE),
-            'sim duration': str(SIM_DURATION)
-        }
-    )
-    return system
-
-
-def random_bitstream(size):
-    return numpy.random.randint(low=0, high=2, size=size, dtype=numpy.int8)
-
-
-def update_system_config(system, configs):
+def update_system_config(system, test_configs):
     system.config_update(
         tx1={
-            'modulation': configs[0],
-            'carrier frequency': configs[1],
-            'symbol duration': configs[2],
+            'modulation': test_configs[0],
+            'carrier frequency': test_configs[1],
+            'symbol duration': test_configs[2],
         },
         rx1={
-            'modulation': configs[0],
-            'carrier frequency': configs[1],
-            'symbol duration': configs[2],
+            'modulation': test_configs[0],
+            'carrier frequency': test_configs[1],
+            'symbol duration': test_configs[2],
         }
     )
-    length = int(SIM_DURATION/float(configs[2]))
-    if 'BPSK' == configs[0]:
+    sim_duration = system.config.getfloat('system', 'sim duration')
+    length = int(sim_duration/float(test_configs[2]))
+    if 'BPSK' == test_configs[0]:
         multiple = 1
-    elif 'QPSK' == configs[0]:
+    elif 'QPSK' == test_configs[0]:
         multiple = 2
-    elif '16QAM' == configs[0]:
+    elif '16QAM' == test_configs[0]:
         multiple = 4
     return (multiple, length*multiple)
 
 
-@pytest.mark.parametrize('configs', testconfig_radios)
-def test_full_duration(system, configs):
-    tx1 = tx.Transmitter(system, 'tx1')
-    rx1 = rx.Receiver(system, 'rx1')
-    system.radio_add(rx1)
-    system.radio_add(tx1)
-    size = update_system_config(system, configs)[1]
+@pytest.mark.parametrize('test_configs', testconfig_radios)
+def test_full_duration(system, test_configs, init_radios, random_bitstream):
+    [tx1, rx1] = init_radios(NUM_OF_RADIOS)
+    size = update_system_config(system, test_configs)[1]
     tx1.bitstream = random_bitstream(size)
     system.run()
     assert (tx1.bitstream == rx1.bitstream).all()
 
 
-@pytest.mark.parametrize('configs', testconfig_radios)
-def test_partial_duration(system, configs):
-    tx1 = tx.Transmitter(system, 'tx1')
-    rx1 = rx.Receiver(system, 'rx1')
-    system.radio_add(rx1)
-    system.radio_add(tx1)
-    length = update_system_config(system, configs)
+@pytest.mark.parametrize('test_configs', testconfig_radios)
+def test_partial_duration(system, test_configs, init_radios, random_bitstream):
+    [tx1, rx1] = init_radios(NUM_OF_RADIOS)
+    length = update_system_config(system, test_configs)
     size = numpy.random.randint(low=length[0], high=length[1]-length[0])
     tx1.bitstream = random_bitstream(size)
     system.run()
     assert (tx1.bitstream == rx1.bitstream).all()
 
 
-@pytest.mark.parametrize('configs', testconfig_radios)
-def test_exceed_duration(system, configs):
-    tx1 = tx.Transmitter(system, 'tx1')
-    rx1 = rx.Receiver(system, 'rx1')
-    system.radio_add(rx1)
-    system.radio_add(tx1)
-    length = update_system_config(system, configs)
+@pytest.mark.parametrize('test_configs', testconfig_radios)
+def test_exceed_duration(system, test_configs, init_radios, random_bitstream):
+    [tx1, rx1] = init_radios(NUM_OF_RADIOS)
+    length = update_system_config(system, test_configs)
     size = numpy.random.randint(low=length[1], high=2*length[1])
     tx1.bitstream = random_bitstream(size)
     system.run()
