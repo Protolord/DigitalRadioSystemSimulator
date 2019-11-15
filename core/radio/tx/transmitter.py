@@ -20,6 +20,10 @@ class Transmitter():
     def bitstream(self, value):
         self._bitstream = value
 
+    @property
+    def symbolstream(self):
+        return self._symbolstream
+
     def __str__(self):
         return self._name
 

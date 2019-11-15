@@ -15,6 +15,10 @@ class Receiver():
     def bitstream(self):
         return self._bitstream
 
+    @property
+    def symbolstream(self):
+        return self._symbolstream
+
     def __str__(self):
         return self._name
 

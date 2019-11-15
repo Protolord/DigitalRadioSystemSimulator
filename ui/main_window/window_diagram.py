@@ -28,6 +28,7 @@ class WindowDiagram():
         self._repeat_render_list = {}
         self._inputoutput_type = self.stringvars_init()
         self._bitstream_modes = self.stringvars_init()
+        self._symbolstream_modes = self.stringvars_init()
 
     @property
     def root(self):
@@ -149,7 +150,28 @@ class WindowDiagram():
         )
 
     def render_symbolstream(self, event, radio):
-        print(f'Clicked Button{event.num} symbol stream for {radio}')
+        frame = self.get_frame(
+            event.num, repeat_render=('self.render_symbolstream', radio)
+        )
+        label_name = tkinter.ttk.Label(frame, text=f'{radio} display mode:')
+        combobox_displaytype = self.combobox_init(
+            frame, self._symbolstream_modes[event.num],
+            ('Complex Plane',)
+        )
+        combobox_displaytype.bind(
+            '<<ComboboxSelected>>',
+            lambda e: self.render_symbolstream(event, radio)
+        )
+        figure = figurecanvas.FigureCanvas(frame)
+        figure.plot_symbolstream(
+            radio.symbolstream, self._symbolstream_modes[event.num].get()
+        )
+        # geometry
+        label_name.grid(row=0, column=0, sticky='E', pady=(5, 5))
+        combobox_displaytype.grid(row=0, column=1, sticky='W')
+        figure.grid(
+            row=1, columnspan=2, padx=(2, 2), pady=(2, 2), sticky='NSEW'
+        )
 
     def render_signal(self, event, radio):
         print(f'Clicked Button{event.num} signal for {radio}')
